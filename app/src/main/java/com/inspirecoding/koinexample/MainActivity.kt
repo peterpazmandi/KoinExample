@@ -3,20 +3,20 @@ package com.inspirecoding.koinexample
 import android.app.Activity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.inspirecoding.koinexample.adapter.OrderAdapter
+import com.inspirecoding.koinexample.model.Burger
+import com.inspirecoding.koinexample.model.Drink
+import com.inspirecoding.koinexample.model.Guest
 import com.inspirecoding.koinexample.model.Order
 import com.inspirecoding.koinexample.viewmodel.MainActivityViewModel
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
+import org.koin.android.ext.android.get
 
 private const val TAG = "MainActivity"
 class MainActivity : AppCompatActivity()
@@ -41,17 +41,17 @@ class MainActivity : AppCompatActivity()
 
         mainActivityViewModel.listOrdersLD.observe(this, Observer { listOfOrder ->
             listOrders.add(listOfOrder[listOfOrder.lastIndex])
-            orderAdapter.notifyItemInserted(listOrders.lastIndex)
+            orderAdapter.notifyDataSetChanged()
         })
 
         btn_order.setOnClickListener {
             if(nullAndEmptyChecker())
             {
-                mainActivityViewModel.insertOrder(
-                    et_nameGuest.text.toString(),
-                    et_burger.text.toString(),
-                    tv_drink.text.toString()
-                )
+                var order = get<Order>()
+                order.guest.name = et_nameGuest.text.toString()
+                order.burger.name = et_burger.text.toString()
+
+                mainActivityViewModel.insertOrder(order)
                 clearFields()
                 hideSoftKeyboard()
             }
