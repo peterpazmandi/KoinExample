@@ -11,10 +11,11 @@ import kotlinx.android.synthetic.main.order_item.view.*
 import com.inspirecoding.koinexample.R
 
 private val TAG = "OrderAdapter"
-class OrderAdapter(var orderList: MutableList<Order>): RecyclerView.Adapter<OrderAdapter.ViewHolder>(), RwAdapter<Order>
+class OrderAdapter(var orderList: MutableList<Order>?): RecyclerView.Adapter<OrderAdapter.ViewHolder>(), RwAdapter<Order>
 {
     inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView)
     {
+        val guestName: TextView = itemView.tv_nameGuest
         val burger: TextView = itemView.tv_burger
         val drink: TextView = itemView.tv_drink
     }
@@ -25,20 +26,25 @@ class OrderAdapter(var orderList: MutableList<Order>): RecyclerView.Adapter<Orde
         return ViewHolder(viewRow)
     }
 
-    override fun getItemCount(): Int = orderList.size
+    override fun getItemCount(): Int = orderList?.size ?: 0
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int)
     {
-        Log.d(TAG, orderList[position].burger.name)
-        holder.burger.text = orderList[position].burger.name
-        holder.drink.text = orderList[position].drink.name
+        orderList?.let {list ->
+            Log.d(TAG, list[position].burger.name)
+            holder.guestName.text = list[position].guest.name
+            holder.burger.text = list[position].burger.name
+            holder.drink.text = list[position].drink.name
+        }
     }
 
-    override fun getData(): List<Order> = orderList
+    override fun getData(): List<Order>? = orderList
 
     override fun insertData(order: Order)
     {
-        orderList.add(order)
-        notifyItemInserted(orderList.lastIndex)
+        orderList?.let {
+            it.add(order)
+            notifyItemInserted(it.lastIndex)
+        }
     }
 }

@@ -1,26 +1,31 @@
 package com.inspirecoding.koinexample
 
+import android.app.Activity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
+import android.util.Log
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.inspirecoding.koinexample.adapter.OrderAdapter
-import com.inspirecoding.koinexample.model.Burger
-import com.inspirecoding.koinexample.model.Drink
-import com.inspirecoding.koinexample.model.Guest
 import com.inspirecoding.koinexample.model.Order
+import com.inspirecoding.koinexample.viewmodel.MainActivityViewModel
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 
+private const val TAG = "MainActivity"
 class MainActivity : AppCompatActivity()
 {
-    private lateinit var burger: Burger
-    private lateinit var drink: Drink
-    private lateinit var guest: Guest
-    private lateinit var order: Order
+    private var listOrders = mutableListOf<Order>()
 
-    private val listOrders = mutableListOf<Order>()
+    private val mainActivityViewModel by lazy {
+        ViewModelProvider(this).get(MainActivityViewModel::class.java)
+    }
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var orderAdapter: OrderAdapter
@@ -32,22 +37,44 @@ class MainActivity : AppCompatActivity()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        createExampleList()
-        buildRecyclerView()
+        buildRecyclerView(listOrders)
+
+        mainActivityViewModel.listOrdersLD.observe(this, Observer { listOfOrder ->
+            listOrders.add(listOfOrder[listOfOrder.lastIndex])
+            orderAdapter.notifyItemInserted(listOrders.lastIndex)
+        })
 
         btn_order.setOnClickListener {
             if(nullAndEmptyChecker())
             {
-                insertOrder()
+                mainActivityViewModel.insertOrder(
+                    et_nameGuest.text.toString(),
+                    et_burger.text.toString(),
+                    tv_drink.text.toString()
+                )
                 clearFields()
+                hideSoftKeyboard()
             }
         }
     }
 
-    private fun clearFields()
+    private fun buildRecyclerView(listOfOrder: MutableList<Order>?)
     {
-        et_nameGuest.text.clear()
-        et_burger.text.clear()
+        recyclerView = findViewById(R.id.rv_listOfOrders)
+        recyclerView.setHasFixedSize(true)
+        layoutManager = LinearLayoutManager(this)
+        orderAdapter = OrderAdapter(listOfOrder)
+
+        recyclerView.also {
+            recyclerView.layoutManager = this.layoutManager
+            recyclerView.adapter = orderAdapter
+        }
+    }
+
+    private fun hideSoftKeyboard()
+    {
+        val inputMethodManager: InputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
     }
 
     private fun nullAndEmptyChecker(): Boolean
@@ -65,60 +92,9 @@ class MainActivity : AppCompatActivity()
         return true
     }
 
-    private fun insertOrder()
+    private fun clearFields()
     {
-        burger = Burger(et_burger.text.toString())
-        drink = Drink()
-        guest = Guest(et_nameGuest.text.toString())
-        order = Order(
-            burger = burger,
-            drink = drink,
-            guest = guest)
-        listOrders.add(order)
-
-        orderAdapter.notifyItemInserted(listOrders.lastIndex)
-    }
-
-    private fun createExampleList()
-    {
-        burger = Burger("Street Burger")
-        drink = Drink()
-        guest = Guest("Inspire Coding")
-        order = Order(
-            burger = burger,
-            drink = drink,
-            guest = guest)
-        listOrders.add(order)
-
-        burger = Burger("Smokey BBQ")
-        drink = Drink()
-        guest = Guest("Peter")
-        order = Order(
-            burger = burger,
-            drink = drink,
-            guest = guest)
-        listOrders.add(order)
-
-        burger = Burger("Guitar Hero")
-        drink = Drink()
-        guest = Guest("Viktoria")
-        order = Order(
-            burger = burger,
-            drink = drink,
-            guest = guest)
-        listOrders.add(order)
-    }
-
-    private fun buildRecyclerView()
-    {
-        recyclerView = findViewById(R.id.rv_listOfOrders)
-        recyclerView.setHasFixedSize(true)
-        layoutManager = LinearLayoutManager(this)
-        orderAdapter = OrderAdapter(listOrders)
-
-        recyclerView.also {
-            recyclerView.layoutManager = this.layoutManager
-            recyclerView.adapter = orderAdapter
-        }
+        et_nameGuest.text.clear()
+        et_burger.text.clear()
     }
 }

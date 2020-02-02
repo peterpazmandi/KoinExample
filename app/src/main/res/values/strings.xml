@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">KoinExample</string>
+
+    <string name="your_name">Your name</string>
+    <string name="your_burger">Your Burger</string>
+    <string name="mineral_water">Mineral water</string>
+    <string name="order">Order</string>
 </resources>
