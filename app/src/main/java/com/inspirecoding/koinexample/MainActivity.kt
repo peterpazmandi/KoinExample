@@ -36,11 +36,21 @@ class MainActivity : AppCompatActivity()
         buildRecyclerView()
 
         btn_order.setOnClickListener {
-            if(nullAndEmptyChecker(it)) insertOrder()
+            if(nullAndEmptyChecker())
+            {
+                insertOrder()
+                clearFields()
+            }
         }
     }
 
-    private fun nullAndEmptyChecker(view: View): Boolean
+    private fun clearFields()
+    {
+        et_nameGuest.text.clear()
+        et_burger.text.clear()
+    }
+
+    private fun nullAndEmptyChecker(): Boolean
     {
         if (et_nameGuest.text.isNullOrEmpty())
         {
