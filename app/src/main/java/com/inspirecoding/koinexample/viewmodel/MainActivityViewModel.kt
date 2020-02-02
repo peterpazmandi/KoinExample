@@ -7,7 +7,6 @@ import com.inspirecoding.koinexample.model.Burger
 import com.inspirecoding.koinexample.model.Drink
 import com.inspirecoding.koinexample.model.Guest
 import com.inspirecoding.koinexample.model.Order
-import kotlinx.android.synthetic.main.activity_main.*
 
 private const val TAG = "MainActivityViewModel"
 class MainActivityViewModel: ViewModel()

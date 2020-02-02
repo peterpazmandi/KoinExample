@@ -44,7 +44,6 @@ class OrderAdapter(var orderList: MutableList<Order>?): RecyclerView.Adapter<Ord
     {
         orderList?.let {
             it.add(order)
-            notifyItemInserted(it.lastIndex)
         }
     }
 }
