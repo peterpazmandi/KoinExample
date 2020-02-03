@@ -1,7 +1,8 @@
 package com.inspirecoding.koinexample
 
 import android.app.Application
-import com.inspirecoding.koinexample.modul.appModul
+import com.inspirecoding.koinexample.modul.appModule
+import com.inspirecoding.koinexample.modul.mainActivityViewModelModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
@@ -13,7 +14,7 @@ class MyApp: Application()
 
         startKoin {
             androidContext(this@MyApp)
-            modules(listOf(appModul))
+            modules(listOf(appModule, mainActivityViewModelModule))
         }
     }
 }

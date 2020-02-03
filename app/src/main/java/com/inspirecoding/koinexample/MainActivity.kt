@@ -17,15 +17,19 @@ import com.inspirecoding.koinexample.model.Order
 import com.inspirecoding.koinexample.viewmodel.MainActivityViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.android.ext.android.get
+import org.koin.androidx.viewmodel.ext.android.getViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 private const val TAG = "MainActivity"
 class MainActivity : AppCompatActivity()
 {
     private var listOrders = mutableListOf<Order>()
 
-    private val mainActivityViewModel by lazy {
-        ViewModelProvider(this).get(MainActivityViewModel::class.java)
-    }
+//    private val mainActivityViewModel by lazy {
+//        ViewModelProvider(this).get(MainActivityViewModel::class.java)
+//    }
+
+    private val mainActivityViewModel: MainActivityViewModel by viewModel()
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var orderAdapter: OrderAdapter
@@ -47,7 +51,7 @@ class MainActivity : AppCompatActivity()
         btn_order.setOnClickListener {
             if(nullAndEmptyChecker())
             {
-                var order = get<Order>()
+                val order = get<Order>()
                 order.guest.name = et_nameGuest.text.toString()
                 order.burger.name = et_burger.text.toString()
 
